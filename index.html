@@ -1,0 +1,351 @@
+<html><head>
+<title>Neurowave Synth - Mobile Binaural Experience</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: 'Orbitron', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+    margin: 0;
+    padding: 20px;
+    color: #e94560;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .container {
+    max-width: 100%;
+    width: 100%;
+    background-color: rgba(26, 26, 46, 0.8);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
+  }
+  h1, h2 {
+    color: #e94560;
+    text-align: center;
+    text-shadow: 0 0 10px rgba(233, 69, 96, 0.7);
+    margin-top: 0;
+  }
+  h1 { font-size: 2em; }
+  h2 { font-size: 1.5em; margin-top: 20px; }
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  .control-group {
+    background: rgba(15, 52, 96, 0.6);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(233, 69, 96, 0.3);
+  }
+  label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #53d8fb;
+  }
+  input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    background: #0f3460;
+    outline: none;
+    border-radius: 15px;
+    height: 10px;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    background: #e94560;
+    cursor: pointer;
+    border-radius: 50%;
+  }
+  select {
+    width: 100%;
+    padding: 10px;
+    background-color: #0f3460;
+    color: #53d8fb;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  button {
+    background-color: #e94560;
+    color: #1a1a2e;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 10px 0;
+    width: 100%;
+    font-family: 'Orbitron', sans-serif;
+  }
+  button:hover, button:active {
+    background-color: #53d8fb;
+    box-shadow: 0 0 15px rgba(83, 216, 251, 0.8);
+  }
+  .visualization {
+    width: 100%;
+    height: 150px;
+    background-color: rgba(15, 52, 96, 0.3);
+    border-radius: 10px;
+    margin-top: 20px;
+    overflow: hidden;
+    box-shadow: inset 0 0 10px rgba(233, 69, 96, 0.5);
+  }
+  #waveform {
+    width: 100%;
+    height: 100%;
+  }
+  .value-display {
+    color: #53d8fb;
+    font-size: 0.9em;
+    text-align: right;
+  }
+  .note {
+    text-align: center;
+    color: #53d8fb;
+    font-size: 0.9em;
+    margin-top: 20px;
+  }
+  .preset-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .preset-button {
+    background-color: #0f3460;
+    color: #53d8fb;
+    font-size: 14px;
+    padding: 10px;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Neurowave Synth</h1>
+    <p style="text-align: center; color: #53d8fb;">Immerse yourself in binaural beats. Craft your neural symphony on-the-go.</p>
+    
+    <div class="controls">
+      <div class="control-group">
+        <label for="baseFrequency">Carrier Wave (Hz)</label>
+        <input type="range" id="baseFrequency" min="20" max="500" value="200" step="1">
+        <div id="baseFrequencyValue" class="value-display">200 Hz</div>
+      </div>
+      
+      <div class="control-group">
+        <label for="binauralBeat">Neural Oscillation (Hz)</label>
+        <input type="range" id="binauralBeat" min="0.5" max="40" value="10" step="0.5">
+        <div id="binauralBeatValue" class="value-display">10 Hz</div>
+      </div>
+      
+      <div class="control-group">
+        <label for="duration">Temporal Extent (min)</label>
+        <input type="range" id="duration" min="1" max="60" value="15" step="1">
+        <div id="durationValue" class="value-display">15 minutes</div>
+      </div>
+      
+      <div class="control-group">
+        <label for="waveType">Waveform Morphology</label>
+        <select id="waveType">
+          <option value="sine">Sinusoidal</option>
+          <option value="square">Quadratic</option>
+          <option value="triangle">Triangular</option>
+          <option value="sawtooth">Serrated</option>
+        </select>
+      </div>
+    </div>
+    
+    <button id="generateButton">Initiate Neural Synthesis</button>
+    <button id="stopButton" style="display: none;">Terminate Sequence</button>
+    
+    <h2>Brainwave Presets</h2>
+    <div class="preset-buttons">
+      <button class="preset-button" data-freq="1">Delta (0.5-4 Hz)<br>Deep sleep, healing</button>
+      <button class="preset-button" data-freq="5">Theta (4-8 Hz)<br>Meditation, memory</button>
+      <button class="preset-button" data-freq="10">Alpha (8-13 Hz)<br>Relaxation, focus</button>
+      <button class="preset-button" data-freq="15">Beta (13-30 Hz)<br>Alert, concentration</button>
+      <button class="preset-button" data-freq="35">Gamma (30-100 Hz)<br>Insight, peak focus</button>
+    </div>
+    
+    <div class="visualization">
+      <canvas id="waveform"></canvas>
+    </div>
+
+    <p class="note">For the best experience, use headphones and ensure your device is not on silent mode.</p>
+  </div>
+
+  <script>
+    let audioContext;
+    let oscillatorLeft;
+    let oscillatorRight;
+    let analyser;
+
+    const baseFrequencySlider = document.getElementById('baseFrequency');
+    const binauralBeatSlider = document.getElementById('binauralBeat');
+    const durationSlider = document.getElementById('duration');
+    const waveTypeSelect = document.getElementById('waveType');
+    const generateButton = document.getElementById('generateButton');
+    const stopButton = document.getElementById('stopButton');
+    const canvas = document.getElementById('waveform');
+    const canvasCtx = canvas.getContext('2d');
+
+    function updateSliderValue(slider, valueSpan) {
+      document.getElementById(valueSpan).textContent = slider.value + (valueSpan === 'durationValue' ? ' minutes' : ' Hz');
+    }
+
+    baseFrequencySlider.addEventListener('input', () => updateSliderValue(baseFrequencySlider, 'baseFrequencyValue'));
+    binauralBeatSlider.addEventListener('input', () => updateSliderValue(binauralBeatSlider, 'binauralBeatValue'));
+    durationSlider.addEventListener('input', () => updateSliderValue(durationSlider, 'durationValue'));
+
+    function initiateBinauralBeat() {
+      if (audioContext) audioContext.close();
+      
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioContext.createAnalyser();
+      
+      const baseFrequency = parseFloat(baseFrequencySlider.value);
+      const binauralBeat = parseFloat(binauralBeatSlider.value);
+      const duration = parseFloat(durationSlider.value) * 60; // convert to seconds
+      const waveType = waveTypeSelect.value;
+
+      oscillatorLeft = audioContext.createOscillator();
+      oscillatorRight = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillatorLeft.type = waveType;
+      oscillatorRight.type = waveType;
+      oscillatorLeft.frequency.setValueAtTime(baseFrequency, audioContext.currentTime);
+      oscillatorRight.frequency.setValueAtTime(baseFrequency + binauralBeat, audioContext.currentTime);
+
+      const merger = audioContext.createChannelMerger(2);
+
+      oscillatorLeft.connect(merger, 0, 0);
+      oscillatorRight.connect(merger, 0, 1);
+      merger.connect(gainNode);
+      gainNode.connect(analyser);
+      analyser.connect(audioContext.destination);
+
+      oscillatorLeft.start();
+      oscillatorRight.start();
+
+      generateButton.style.display = 'none';
+      stopButton.style.display = 'block';
+
+      visualize();
+
+      setTimeout(() => {
+        stopBinauralBeat();
+      }, duration * 1000);
+    }
+
+    generateButton.addEventListener('click', initiateBinauralBeat);
+
+    stopButton.addEventListener('click', stopBinauralBeat);
+
+    function stopBinauralBeat() {
+      if (oscillatorLeft) {
+        oscillatorLeft.stop();
+        oscillatorRight.stop();
+        audioContext.close();
+      }
+      generateButton.style.display = 'block';
+      stopButton.style.display = 'none';
+    }
+
+    function visualize() {
+      requestAnimationFrame(visualize);
+
+      analyser.fftSize = 2048;
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      analyser.getByteTimeDomainData(dataArray);
+
+      canvasCtx.fillStyle = 'rgba(15, 52, 96, 0.3)';
+      canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+      canvasCtx.lineWidth = 2;
+      canvasCtx.strokeStyle = 'rgb(233, 69, 96)';
+      canvasCtx.beginPath();
+
+      const sliceWidth = canvas.width * 1.0 / bufferLength;
+      let x = 0;
+
+      for (let i = 0; i < bufferLength; i++) {
+        const v = dataArray[i] / 128.0;
+        const y = v * canvas.height / 2;
+
+        if (i === 0) {
+          canvasCtx.moveTo(x, y);
+        } else {
+          canvasCtx.lineTo(x, y);
+        }
+
+        x += sliceWidth;
+      }
+
+      canvasCtx.lineTo(canvas.width, canvas.height / 2);
+      canvasCtx.stroke();
+
+      // Add glow effect
+      canvasCtx.shadowBlur = 15;
+      canvasCtx.shadowColor = 'rgba(233, 69, 96, 0.7)';
+      canvasCtx.stroke();
+    }
+
+    // Initial update of slider values
+    updateSliderValue(baseFrequencySlider, 'baseFrequencyValue');
+    updateSliderValue(binauralBeatSlider, 'binauralBeatValue');
+    updateSliderValue(durationSlider, 'durationValue');
+
+    // Resize canvas to fit container
+    function resizeCanvas() {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Unlock audio on iOS
+    function unlockAudioContext(audioCtx) {
+      if (audioCtx.state !== 'suspended') return;
+      const b = document.body;
+      const events = ['touchstart', 'touchend', 'mousedown', 'keydown'];
+      events.forEach(e => b.addEventListener(e, unlock, false));
+      function unlock() { audioCtx.resume().then(clean); }
+      function clean() { events.forEach(e => b.removeEventListener(e, unlock)); }
+    }
+
+    generateButton.addEventListener('click', function() {
+      unlockAudioContext(audioContext);
+    });
+
+    // Preset buttons functionality
+    const presetButtons = document.querySelectorAll('.preset-button');
+    presetButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const freq = this.getAttribute('data-freq');
+        binauralBeatSlider.value = freq;
+        updateSliderValue(binauralBeatSlider, 'binauralBeatValue');
+        initiateBinauralBeat();
+      });
+    });
+  </script>
+</body></html>
